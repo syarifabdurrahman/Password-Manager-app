@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run android:*)",
+      "Bash(dir:*)",
+      "Bash(gradlew.bat:*)",
+      "Bash(./gradlew:*)"
+    ]
+  }
+}
