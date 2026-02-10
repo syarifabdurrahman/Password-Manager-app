@@ -15,17 +15,17 @@ import {
 import {
   ArrowLeft,
   Shield,
-  Bell,
   Moon,
   Sun,
   Info,
   Trash2,
   Download,
   Upload,
+  Palette,
 } from 'lucide-react-native';
 
 import { useTheme } from '@/contexts/ThemeContext';
-import { GlassCard, GlassButton } from '@/components';
+import { GlassCard } from '@/components';
 import { hapticService, accountsStorage } from '@/services';
 import { STORAGE_KEYS } from '@/types';
 
@@ -33,7 +33,20 @@ interface SettingsScreenProps {
   onBack?: () => void;
 }
 
-const SETTINGS_SECTIONS = [
+interface SettingItem {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  destructive?: boolean;
+}
+
+interface SettingsSection {
+  title: string;
+  items: SettingItem[];
+}
+
+const SETTINGS_SECTIONS: SettingsSection[] = [
   {
     title: 'Appearance',
     items: [
@@ -97,10 +110,10 @@ const SETTINGS_SECTIONS = [
       },
     ],
   },
-] as const;
+];
 
 const ICON_MAP: Record<string, React.ReactNode> = {
-  palette: <Shield size={18} strokeWidth={1.5} />,
+  palette: <Palette size={18} strokeWidth={1.5} />,
   fingerprint: <Shield size={18} strokeWidth={1.5} />,
   lock: <Shield size={18} strokeWidth={1.5} />,
   download: <Download size={18} strokeWidth={1.5} />,
@@ -172,7 +185,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onBack }) => {
         case 'about':
           Alert.alert(
             'About MaVault',
-            'Version 1.0.0\n\nA secure password manager with glassmorphism UI.',
+            'A secure Password manager',
             [{ text: 'OK' }]
           );
           break;
@@ -185,7 +198,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onBack }) => {
   );
 
   const renderSettingItem = useCallback(
-    (item: (typeof SETTINGS_SECTIONS)[number]['items'][number]) => (
+    (item: SettingItem) => (
       <TouchableOpacity
         key={item.id}
         style={[
@@ -258,6 +271,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onBack }) => {
             </GlassCard>
           </View>
         ))}
+        <View style={styles.developerSection}>
+          <Text style={styles.developerLabel}>developer:</Text>
+          <Text style={[styles.developerNames, { color: colors.text }]}>
+            Favian Hugo, Syarif Abdurrahman
+          </Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -339,5 +358,22 @@ const styles = StyleSheet.create({
   },
   settingValue: {
     marginLeft: 12,
+  },
+  developerSection: {
+    alignItems: 'center',
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  developerLabel: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  developerNames: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });

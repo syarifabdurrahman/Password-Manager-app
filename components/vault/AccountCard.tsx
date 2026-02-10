@@ -4,19 +4,19 @@
  * Features one-tap copy with haptic feedback
  */
 
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Animated,
-} from 'react-native';
-import { Copy, Eye, EyeOff, ExternalLink, Trash2 } from 'lucide-react-native';
-import { useTheme } from '@/contexts/ThemeContext';
-import { GlassCard } from '@/components/common';
-import { hapticService, clipboardService } from '@/services';
-import type { Account } from '@/types';
+} from "react-native";
+import { Copy, Eye, EyeOff, ExternalLink, Trash2 } from "lucide-react-native";
+import { useTheme } from "@/contexts/ThemeContext";
+import { GlassCard } from "@/components/common";
+import { hapticService, clipboardService } from "@/services";
+import type { Account } from "@/types";
 
 interface AccountCardProps {
   account: Account;
@@ -38,15 +38,15 @@ export const AccountCard: React.FC<AccountCardProps> = ({
 }) => {
   const { colors, isDark } = useTheme();
   const [showPassword, setShowPassword] = React.useState(false);
-  const [copiedField, setCopiedField] = React.useState<'password' | 'username' | null>(
-    null
-  );
+  const [copiedField, setCopiedField] = React.useState<
+    "password" | "username" | null
+  >(null);
   const scale = useRef(new Animated.Value(1)).current;
 
   // Generate initials from account name
   const getInitials = (name: string) => {
     const words = name.trim().split(/\s+/);
-    if (words.length === 0) return '??';
+    if (words.length === 0) return "??";
     if (words.length === 1) {
       return words[0].substring(0, 2).toUpperCase();
     }
@@ -56,8 +56,16 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   // Generate consistent color based on account name
   const getAvatarColor = (name: string) => {
     const colorsList = [
-      '#6366F1', '#8B5CF6', '#EC4899', '#F43F5E', '#F59E0B',
-      '#10B981', '#06B6D4', '#3B82F6', '#6366F1', '#8B5CF6'
+      "#6366F1",
+      "#8B5CF6",
+      "#EC4899",
+      "#F43F5E",
+      "#F59E0B",
+      "#10B981",
+      "#06B6D4",
+      "#3B82F6",
+      "#6366F1",
+      "#8B5CF6",
     ];
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
@@ -83,19 +91,19 @@ export const AccountCard: React.FC<AccountCardProps> = ({
     }).start();
   };
 
-  const handleCopy = async (text: string, field: 'password' | 'username') => {
-    hapticService.trigger('success');
+  const handleCopy = async (text: string, field: "password" | "username") => {
+    hapticService.trigger("success");
     await clipboardService.copyToClipboard(text);
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 1500);
   };
 
   const handleDelete = () => {
-    hapticService.trigger('warning');
+    hapticService.trigger("warning");
     onDelete?.();
   };
 
-  const displayPassword = showPassword ? account.password : '•'.repeat(12);
+  const displayPassword = showPassword ? account.password : "•".repeat(12);
 
   return (
     <AnimatedTouchableOpacity
@@ -105,17 +113,27 @@ export const AccountCard: React.FC<AccountCardProps> = ({
       activeOpacity={0.9}
     >
       <Animated.View style={{ transform: [{ scale }] }}>
-        <GlassCard style={styles.card}>
+        <GlassCard
+          style={styles.card}
+          reducedTransparency
+          backgroundColor={isDark ? colors.background : '#FFFFFF'}
+        >
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
                 <Text style={styles.avatarText}>{initials}</Text>
               </View>
               <View style={styles.titleContainer}>
-                <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
+                <Text
+                  style={[styles.name, { color: colors.text }]}
+                  numberOfLines={1}
+                >
                   {account.name}
                 </Text>
-                <Text style={[styles.username, { color: colors.textSecondary }]} numberOfLines={1}>
+                <Text
+                  style={[styles.username, { color: colors.textSecondary }]}
+                  numberOfLines={1}
+                >
                   {account.username}
                 </Text>
               </View>
@@ -129,7 +147,11 @@ export const AccountCard: React.FC<AccountCardProps> = ({
                     onEdit();
                   }}
                 >
-                  <ExternalLink size={16} color={colors.textSecondary} strokeWidth={1.5} />
+                  <ExternalLink
+                    size={16}
+                    color={colors.textSecondary}
+                    strokeWidth={1.5}
+                  />
                 </TouchableOpacity>
               )}
               {onDelete && (
@@ -143,7 +165,12 @@ export const AccountCard: React.FC<AccountCardProps> = ({
             </View>
           </View>
 
-          <View style={[styles.passwordContainer, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : '#ECEDEE' }]}>
+          <View
+            style={[
+              styles.passwordContainer,
+              { backgroundColor: isDark ? "rgba(0, 0, 0, 0.2)" : "#ECEDEE" },
+            ]}
+          >
             <Text style={[styles.password, { color: colors.text }]}>
               {displayPassword}
             </Text>
@@ -151,23 +178,38 @@ export const AccountCard: React.FC<AccountCardProps> = ({
               <TouchableOpacity
                 style={styles.iconButton}
                 onPress={() => {
-                  hapticService.trigger('light');
+                  hapticService.trigger("light");
                   setShowPassword(!showPassword);
                 }}
               >
                 {showPassword ? (
-                  <EyeOff size={16} color={colors.textSecondary} strokeWidth={1.5} />
+                  <EyeOff
+                    size={16}
+                    color={colors.textSecondary}
+                    strokeWidth={1.5}
+                  />
                 ) : (
-                  <Eye size={16} color={colors.textSecondary} strokeWidth={1.5} />
+                  <Eye
+                    size={16}
+                    color={colors.textSecondary}
+                    strokeWidth={1.5}
+                  />
                 )}
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.iconButton, copiedField === 'password' && styles.copied]}
-                onPress={() => handleCopy(account.password, 'password')}
+                style={[
+                  styles.iconButton,
+                  copiedField === "password" && styles.copied,
+                ]}
+                onPress={() => handleCopy(account.password, "password")}
               >
                 <Copy
                   size={16}
-                  color={copiedField === 'password' ? colors.success : colors.textSecondary}
+                  color={
+                    copiedField === "password"
+                      ? colors.success
+                      : colors.textSecondary
+                  }
                   strokeWidth={1.5}
                 />
               </TouchableOpacity>
@@ -175,7 +217,10 @@ export const AccountCard: React.FC<AccountCardProps> = ({
           </View>
 
           {account.website && (
-            <Text style={[styles.website, { color: colors.accent }]} numberOfLines={1}>
+            <Text
+              style={[styles.website, { color: colors.accent }]}
+              numberOfLines={1}
+            >
               {account.website}
             </Text>
           )}
@@ -187,10 +232,10 @@ export const AccountCard: React.FC<AccountCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    padding: 16,
-    marginVertical: 8,
+    padding: 12,
+    marginVertical: 6,
     marginHorizontal: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -200,61 +245,61 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 12,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   avatar: {
     width: 44,
     height: 44,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   avatarText: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#FFFFFF',
+    fontWeight: "500",
+    color: "#FFFFFF",
   },
   titleContainer: {
     flex: 1,
   },
   name: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 2,
   },
   username: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   passwordContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 10,
   },
   password: {
     fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'monospace',
+    fontWeight: "600",
+    fontFamily: "monospace",
     letterSpacing: 2,
   },
   passwordActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   iconButton: {
@@ -262,7 +307,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   copied: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    backgroundColor: "rgba(16, 185, 129, 0.2)",
   },
   website: {
     fontSize: 12,

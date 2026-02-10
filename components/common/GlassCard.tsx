@@ -5,27 +5,27 @@
 
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { BlurView } from '@react-native-community/blur';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface GlassCardProps {
   children: ReactNode;
   style?: ViewStyle;
   variant?: 'default' | 'light' | 'accent';
-  blurAmount?: number;
   reducedTransparency?: boolean;
+  backgroundColor?: string;
 }
 
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
   style,
   variant = 'default',
-  blurAmount = 10,
   reducedTransparency = false,
+  backgroundColor,
 }) => {
   const { colors, isDark } = useTheme();
 
   const getBackgroundColor = () => {
+    if (backgroundColor) return backgroundColor;
     if (reducedTransparency) {
       return colors.backgroundSecondary;
     }
@@ -55,24 +55,6 @@ export const GlassCard: React.FC<GlassCardProps> = ({
         style,
       ]}
     >
-      {/* Blur effect for glassmorphism */}
-      {isDark && !reducedTransparency && (
-        <BlurView
-          style={styles.blur}
-          blurType="dark"
-          blurAmount={blurAmount}
-          reducedTransparencyFallbackColor={colors.background}
-        />
-      )}
-      {!isDark && !reducedTransparency && (
-        <BlurView
-          style={styles.blur}
-          blurType="light"
-          blurAmount={blurAmount}
-          reducedTransparencyFallbackColor={colors.background}
-        />
-      )}
-
       {/* Card content */}
       <View style={styles.content}>{children}</View>
     </View>
@@ -86,9 +68,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   lightMode: {},
-  blur: {
-    ...StyleSheet.absoluteFillObject,
-  },
   content: {
     zIndex: 1,
   },

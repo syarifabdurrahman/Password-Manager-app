@@ -227,7 +227,7 @@ export const GeneratorScreen: React.FC<GeneratorScreenProps> = ({
             </Text>
             <View style={[styles.lengthBadge, { backgroundColor: colors.accentLight }]}>
               <Text style={[styles.lengthValue, { color: colors.accent }]}>
-                {Object.values(options).filter((v, i) => i >= 2 && v === true).length}/4
+                {Object.entries(options).filter(([k, v]) => k.startsWith('include') && v === true).length}/4
               </Text>
             </View>
           </View>
@@ -249,7 +249,18 @@ export const GeneratorScreen: React.FC<GeneratorScreenProps> = ({
                 ]}
                 onPress={() => toggleOption(item.key as keyof PasswordGenerationOptions)}
               >
-                <Text style={styles.optionIcon}>{item.icon}</Text>
+                <Text
+                  style={[
+                    styles.optionIcon,
+                    {
+                      color: options[item.key as keyof PasswordGenerationOptions]
+                        ? colors.accent
+                        : colors.textSecondary,
+                    },
+                  ]}
+                >
+                  {item.icon}
+                </Text>
                 <Text
                   style={[
                     styles.optionLabel,
@@ -391,12 +402,12 @@ const styles = StyleSheet.create({
   },
   optionItem: {
     width: (100 - 9) / 4 + '%',
-    aspectRatio: 1,
+    aspectRatio: 1.05,
     borderRadius: 12,
     borderWidth: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
   },
   optionIcon: {
     fontSize: 16,

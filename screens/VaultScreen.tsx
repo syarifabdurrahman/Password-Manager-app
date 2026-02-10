@@ -4,14 +4,13 @@
  * Features: search, filter by category, one-tap copy
  */
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Animated,
   Alert,
 } from 'react-native';
 import {
@@ -28,19 +27,17 @@ import {
   Folder,
 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import { SearchBar, GlassCard, GlassButton } from '@/components';
+import { SearchBar, GlassButton } from '@/components';
 import { AccountCard, AddAccountModal } from '@/components/vault';
 import { accountsStorage, hapticService } from '@/services';
 import { STORAGE_KEYS, ACCOUNT_CATEGORIES, type Account, type AccountCategory } from '@/types';
 
 interface VaultScreenProps {
   onNavigateToGenerator?: () => void;
-  onNavigateToSettings?: () => void;
 }
 
 export const VaultScreen: React.FC<VaultScreenProps> = ({
   onNavigateToGenerator,
-  onNavigateToSettings,
 }) => {
   const { colors, isDark } = useTheme();
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -50,7 +47,6 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   const [showFilters, setShowFilters] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | undefined>();
-  const [deletingAccount, setDeletingAccount] = useState<Account | undefined>();
 
   // Icon map for categories
   const CATEGORY_ICONS: Record<string, React.ReactElement> = {
@@ -126,7 +122,6 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
 
   const handleDeleteAccount = useCallback((account: Account) => {
     hapticService.trigger('warning');
-    setDeletingAccount(account);
     Alert.alert(
       'Delete Account',
       `Are you sure you want to delete "${account.name}"? This action cannot be undone.`,
@@ -138,7 +133,6 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
           onPress: () => {
             const updated = accounts.filter((a) => a.id !== account.id);
             saveAccounts(updated);
-            setDeletingAccount(undefined);
           },
         },
       ]
@@ -179,7 +173,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   }, []);
 
   const renderAccount = useCallback(
-    ({ item, index }: { item: Account; index: number }) => (
+    ({ item }: { item: Account }) => (
       <AccountCard
         account={item}
         onEdit={() => handleEditAccount(item)}
@@ -226,12 +220,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <View>
-            <Text style={[styles.greeting, { color: colors.textSecondary }]}>
-              Welcome back
-            </Text>
-            <Text style={[styles.title, { color: colors.text }]}>Your Vault</Text>
-          </View>
+          <Text style={[styles.title, { color: colors.text }]}>Your Vault</Text>
         </View>
         <View style={styles.headerActions}>
           <TouchableOpacity

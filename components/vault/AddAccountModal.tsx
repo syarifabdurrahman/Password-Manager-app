@@ -16,7 +16,6 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import { BlurView } from "@react-native-community/blur";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   X,
@@ -156,14 +155,7 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.modalContainer}
       >
-        <View style={styles.overlay}>
-          <BlurView
-            style={styles.blur}
-            blurType="dark"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.6)"
-          />
-        </View>
+        <View style={styles.overlay} />
 
         <View style={styles.centeredContainer}>
           <GlassCard style={styles.modalContent} reducedTransparency>
@@ -465,9 +457,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-  },
-  blur: {
-    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   centeredContainer: {
     flex: 1,
