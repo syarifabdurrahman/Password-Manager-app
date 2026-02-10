@@ -14,7 +14,7 @@ import {
 import { useTheme } from '@/contexts/ThemeContext';
 import { hapticService } from '@/services';
 
-interface GlassButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+interface GlassButtonProps extends TouchableOpacityProps {
   title: string;
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   size?: 'small' | 'medium' | 'large';
@@ -32,6 +32,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
   loading = false,
   haptic = true,
   fullWidth = false,
+  style,
   onPress,
   ...props
 }) => {
@@ -60,6 +61,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
 
   const getTextColor = () => {
     if (variant === 'ghost') return colors.accent;
+    if (variant === 'secondary') return colors.text;
     return '#FFFFFF';
   };
 
@@ -68,9 +70,12 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
       style={[
         getButtonStyle(),
         fullWidth && styles.fullWidth,
+        variant === 'primary' && { backgroundColor: colors.accent },
         variant === 'secondary' && { backgroundColor: colors.backgroundSecondary },
         variant === 'danger' && { backgroundColor: colors.danger },
         variant === 'ghost' && { borderWidth: 0 },
+        { borderColor: colors.inputBorder },
+        style,
       ]}
       onPress={handlePress}
       disabled={loading}
@@ -82,7 +87,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
       ) : (
         <>
           {icon && <>{icon}</>}
-          <Text style={getTextStyle()} numberOfLines={1}>
+          <Text style={[getTextStyle(), { color: getTextColor() }]} numberOfLines={1}>
             {title}
           </Text>
         </>

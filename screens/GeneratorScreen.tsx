@@ -131,7 +131,10 @@ export const GeneratorScreen: React.FC<GeneratorScreenProps> = ({
         )}
         <View style={styles.headerCenter}>
           <Sparkles size={20} color={colors.accent} strokeWidth={1.5} />
-          <Text style={[styles.title, { color: colors.text }]}>Password Generator</Text>
+          <View style={styles.titleContainer}>
+            <Text style={[styles.title, { color: colors.text }]}>Password Generator</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Create strong, secure passwords instantly.</Text>
+          </View>
         </View>
         <View style={styles.headerRight} />
       </View>
@@ -141,52 +144,54 @@ export const GeneratorScreen: React.FC<GeneratorScreenProps> = ({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Generated Password Display */}
-        <GlassCard style={styles.passwordCard}>
-          <Text style={[styles.passwordLabel, { color: colors.textSecondary }]}>
-            Generated Password
-          </Text>
-          <Text style={[styles.passwordDisplay, { color: colors.text }]}>
-            {password || 'Generate a password'}
-          </Text>
-          <View style={styles.passwordActions}>
+        {/* Single Card with all generator options */}
+        <GlassCard style={styles.singleCard}>
+          {/* Generated Password Display - Input style */}
+          <View style={styles.passwordSection}>
+            <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+              Generated Password
+            </Text>
+            <View style={[styles.passwordInputWrapper, { backgroundColor: colors.input, borderColor: colors.inputBorder }]}>
+              <Text style={[styles.passwordInputText, { color: colors.text }]}>
+                {password || 'Generate a password'}
+              </Text>
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={generatePassword}
+              >
+                <Shuffle size={20} color={colors.accent} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
             <GlassButton
-              title=""
-              icon={<Shuffle size={18} color={colors.text} strokeWidth={1.5} />}
-              variant="secondary"
-              size="medium"
-              onPress={generatePassword}
-            />
-            <GlassButton
-              title=""
+              title={copied ? 'Copied!' : 'Copy Password'}
               icon={
                 copied ? (
                   <Check size={18} color={colors.success} strokeWidth={1.5} />
                 ) : (
-                  <Copy size={18} color={colors.text} strokeWidth={1.5} />
+                  <Copy size={18} strokeWidth={1.5} />
                 )
               }
-              variant="secondary"
-              size="medium"
               onPress={handleCopy}
+              fullWidth
             />
           </View>
-        </GlassCard>
 
-        {/* Password Strength */}
-        <PasswordStrengthIndicator
-          password={password}
-          strength={strength}
-          entropy={entropy}
-        />
+          {/* Divider */}
+          <View style={[styles.divider, { backgroundColor: colors.divider }]} />
 
-        {/* Password Length Slider */}
-        <GlassCard style={styles.optionsCard}>
+          {/* Password Strength */}
+          <PasswordStrengthIndicator
+            password={password}
+            strength={strength}
+            entropy={entropy}
+          />
+
+          {/* Password Length Slider */}
           <View style={styles.optionHeader}>
             <Text style={[styles.optionTitle, { color: colors.text }]}>
               Password Length
             </Text>
-            <View style={styles.lengthBadge}>
+            <View style={[styles.lengthBadge, { backgroundColor: colors.accentLight }]}>
               <Text style={[styles.lengthValue, { color: colors.accent }]}>
                 {options.length}
               </Text>
@@ -211,13 +216,21 @@ export const GeneratorScreen: React.FC<GeneratorScreenProps> = ({
               {PASSWORD_RANGES.MAX_LENGTH}
             </Text>
           </View>
-        </GlassCard>
 
-        {/* Character Type Options */}
-        <GlassCard style={styles.optionsCard}>
-          <Text style={[styles.optionTitle, { color: colors.text }]}>
-            Character Types
-          </Text>
+          {/* Divider */}
+          <View style={[styles.divider, { backgroundColor: colors.divider }]} />
+
+          {/* Character Type Options */}
+          <View style={styles.optionHeader}>
+            <Text style={[styles.optionTitle, { color: colors.text }]}>
+              Character Types
+            </Text>
+            <View style={[styles.lengthBadge, { backgroundColor: colors.accentLight }]}>
+              <Text style={[styles.lengthValue, { color: colors.accent }]}>
+                {Object.values(options).filter((v, i) => i >= 2 && v === true).length}/4
+              </Text>
+            </View>
+          </View>
           <View style={styles.optionsGrid}>
             {OPTION_ITEMS.map((item) => (
               <TouchableOpacity
@@ -268,7 +281,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 12,
+    paddingBottom: 16,
   },
   backButton: {
     width: 40,
@@ -281,9 +294,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
+  titleContainer: {
+    gap: 2,
+  },
   title: {
     fontSize: 20,
     fontWeight: '700',
+  },
+  subtitle: {
+    fontSize: 13,
+    fontWeight: '500',
   },
   headerRight: {
     width: 40,
@@ -295,26 +315,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 40,
   },
-  passwordCard: {
-    padding: 24,
+  singleCard: {
+    padding: 20,
+  },
+  passwordSection: {
     marginBottom: 20,
   },
-  passwordLabel: {
+  sectionLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+    marginBottom: 10,
+    marginLeft: 4,
+  },
+  passwordInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    borderWidth: 1.5,
+    paddingHorizontal: 16,
+    height: 56,
     marginBottom: 12,
   },
-  passwordDisplay: {
-    fontSize: 24,
-    fontWeight: '700',
+  passwordInputText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
     fontFamily: 'monospace',
     letterSpacing: 1,
-    marginBottom: 20,
-    minHeight: 36,
   },
-  passwordActions: {
-    flexDirection: 'row',
-    gap: 12,
+  refreshButton: {
+    padding: 8,
+    marginLeft: 8,
   },
   optionsCard: {
     padding: 20,
@@ -327,9 +358,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   optionTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
-    marginBottom: 18,
   },
   lengthBadge: {
     paddingHorizontal: 16,

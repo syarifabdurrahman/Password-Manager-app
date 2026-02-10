@@ -36,12 +36,38 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   onDelete,
   isVisible = false,
 }) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const [showPassword, setShowPassword] = React.useState(false);
   const [copiedField, setCopiedField] = React.useState<'password' | 'username' | null>(
     null
   );
   const scale = useRef(new Animated.Value(1)).current;
+
+  // Generate initials from account name
+  const getInitials = (name: string) => {
+    const words = name.trim().split(/\s+/);
+    if (words.length === 0) return '??';
+    if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase();
+    }
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  };
+
+  // Generate consistent color based on account name
+  const getAvatarColor = (name: string) => {
+    const colorsList = [
+      '#6366F1', '#8B5CF6', '#EC4899', '#F43F5E', '#F59E0B',
+      '#10B981', '#06B6D4', '#3B82F6', '#6366F1', '#8B5CF6'
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colorsList[Math.abs(hash) % colorsList.length];
+  };
+
+  const initials = getInitials(account.name);
+  const avatarColor = getAvatarColor(account.name);
 
   const handlePressIn = () => {
     Animated.spring(scale, {
@@ -82,7 +108,9 @@ export const AccountCard: React.FC<AccountCardProps> = ({
         <GlassCard style={styles.card}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <Text style={styles.icon}>{account.icon || '🔐'}</Text>
+              <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
+                <Text style={styles.avatarText}>{initials}</Text>
+              </View>
               <View style={styles.titleContainer}>
                 <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
                   {account.name}
@@ -115,8 +143,8 @@ export const AccountCard: React.FC<AccountCardProps> = ({
             </View>
           </View>
 
-          <View style={styles.passwordContainer}>
-            <Text style={[styles.password, { color: colors.textMuted }]}>
+          <View style={[styles.passwordContainer, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : '#ECEDEE' }]}>
+            <Text style={[styles.password, { color: colors.text }]}>
               {displayPassword}
             </Text>
             <View style={styles.passwordActions}>
@@ -162,6 +190,14 @@ const styles = StyleSheet.create({
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   header: {
     flexDirection: 'row',
@@ -174,9 +210,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  icon: {
-    fontSize: 28,
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
+  },
+  avatarText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#FFFFFF',
   },
   titleContainer: {
     flex: 1,
@@ -188,6 +233,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 14,
+    fontWeight: '500',
   },
   actions: {
     flexDirection: 'row',
@@ -200,7 +246,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   password: {
     fontSize: 16,

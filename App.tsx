@@ -71,17 +71,16 @@ function AppContent() {
       {/* Main Content */}
       <View style={styles.content}>{renderScreen()}</View>
 
-      {/* Bottom Navigation (only on vault screen) */}
-      {currentScreen === 'vault' && (
-        <Animated.View
-          style={[
-            styles.navigationBar,
-            {
-              backgroundColor: colors.glass.bg,
-              borderTopColor: colors.glass.border,
-            },
-          ]}
-        >
+      {/* Bottom Navigation */}
+      <Animated.View
+        style={[
+          styles.navigationBar,
+          {
+            backgroundColor: colors.glass.bg,
+            borderTopColor: colors.glass.border,
+          },
+        ]}
+      >
           <SafeAreaView edges={['bottom']} style={styles.navContent}>
             <TouchableOpacity
               style={styles.navItem}
@@ -141,7 +140,6 @@ function AppContent() {
             </TouchableOpacity>
           </SafeAreaView>
         </Animated.View>
-      )}
     </View>
   );
 }
@@ -159,6 +157,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    fontFamily: 'Montserrat',
   },
   content: {
     flex: 1,

@@ -110,7 +110,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onBack }) => {
-  const { colors, theme, setTheme } = useTheme();
+  const { colors, theme, setTheme, isDark } = useTheme();
 
   const handleSettingPress = useCallback(
     async (settingId: string) => {
@@ -196,7 +196,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onBack }) => {
         onPress={() => handleSettingPress(item.id)}
         activeOpacity={0.7}
       >
-        <View style={[styles.settingIcon, { backgroundColor: colors.input }]}>
+        <View style={[styles.settingIcon, { backgroundColor: isDark ? colors.input : '#ECEDEE' }]}>
           {ICON_MAP[item.icon]}
         </View>
         <View style={styles.settingContent}>
@@ -283,7 +283,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '600',
+    textAlign: 'left' as const,
   },
   headerRight: {
     width: 40,
@@ -329,8 +330,9 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '400',
     marginBottom: 2,
+    textAlign: 'left' as const,
   },
   settingDescription: {
     fontSize: 14,
