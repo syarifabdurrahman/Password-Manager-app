@@ -47,6 +47,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   const [showFilters, setShowFilters] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
 
   // Icon map for categories
   const CATEGORY_ICONS: Record<string, React.ReactElement> = {
@@ -88,6 +89,7 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
   }, [accounts, searchQuery, selectedCategory]);
 
   const loadAccounts = async () => {
+    setIsLoading(true);
     try {
       const stored = await accountsStorage.get(STORAGE_KEYS.ACCOUNTS);
       if (stored) {
@@ -95,6 +97,8 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
       }
     } catch (error) {
       console.error('Error loading accounts:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -215,6 +219,41 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
     </View>
   );
 
+  const renderSkeleton = () => (
+    <View style={styles.listContent}>
+      {[1, 2, 3].map((item) => (
+        <View
+          key={item}
+          style={[
+            styles.skeletonCard,
+            { backgroundColor: isDark ? colors.input : '#F5F5F5', borderColor: colors.inputBorder },
+          ]}
+        >
+          <View
+            style={[styles.skeletonIcon, { backgroundColor: isDark ? colors.inputBorder : '#E0E0E0' }]}
+          />
+          <View style={styles.skeletonContent}>
+            <View
+              style={[styles.skeletonTitle, { backgroundColor: isDark ? colors.inputBorder : '#E0E0E0' }]}
+            />
+            <View
+              style={[styles.skeletonText, { backgroundColor: isDark ? colors.inputBorder : '#E0E0E0' }]}
+            />
+          </View>
+          <View style={styles.skeletonActions}>
+            <View
+              style={[styles.skeletonButton, { backgroundColor: isDark ? colors.inputBorder : '#E0E0E0' }]}
+            />
+            <View
+              style={[styles.skeletonButton, { backgroundColor: isDark ? colors.inputBorder : '#E0E0E0' }]}
+            />
+          </View>
+        </View>
+      ))}
+      <View style={{ height: 100 }} />
+    </View>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
@@ -303,7 +342,9 @@ export const VaultScreen: React.FC<VaultScreenProps> = ({
       </View>
 
       {/* Accounts List */}
-      {accounts.length === 0 ? (
+      {isLoading ? (
+        renderSkeleton()
+      ) : accounts.length === 0 ? (
         renderEmpty()
       ) : filteredAccounts.length === 0 ? (
         renderNoResults()
@@ -434,4 +475,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fabLight: {},
+  skeletonCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  skeletonIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    marginRight: 14,
+  },
+  skeletonContent: {
+    flex: 1,
+  },
+  skeletonTitle: {
+    height: 20,
+    width: 120,
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  skeletonText: {
+    height: 16,
+    width: 180,
+    borderRadius: 4,
+  },
+  skeletonActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  skeletonButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+  },
 });

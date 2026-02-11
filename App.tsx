@@ -5,13 +5,14 @@
  * Main App Entry Point
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   StatusBar,
   StyleSheet,
   View,
   TouchableOpacity,
   Animated,
+  Alert,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -21,8 +22,9 @@ import {
 } from 'lucide-react-native';
 
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
-import { VaultScreen, GeneratorScreen, SettingsScreen } from '@/screens';
-import { hapticService } from '@/services';
+import { VaultScreen, GeneratorScreen, SettingsScreen, PinLockScreen } from '@/screens';
+import { hapticService, accountsStorage } from '@/services';
+import { STORAGE_KEYS } from '@/types';
 
 type ScreenType = 'vault' | 'generator' | 'settings';
 
@@ -30,6 +32,29 @@ function AppContent() {
   const { colors, isDark } = useTheme();
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('vault');
   const [navAnim] = useState(new Animated.Value(0));
+  const [isLocked, setIsLocked] = useState(true);
+  const [storedPin, setStoredPin] = useState<string | null>(null);
+  const [isLoadingPin, setIsLoadingPin] = useState(true);
+
+  // Load PIN setting on mount
+  useEffect(() => {
+    const loadPinSetting = async () => {
+      try {
+        const pin = await accountsStorage.get(STORAGE_KEYS.PIN);
+        setStoredPin(pin);
+        // If no PIN is set, don't lock the app
+        if (!pin) {
+          setIsLocked(false);
+        }
+      } catch (error) {
+        console.log('Error loading PIN setting:', error);
+        setIsLocked(false);
+      } finally {
+        setIsLoadingPin(false);
+      }
+    };
+    loadPinSetting();
+  }, []);
 
   const navigateTo = useCallback((screen: ScreenType) => {
     hapticService.trigger('light');
@@ -57,12 +82,55 @@ function AppContent() {
     }
   }, [currentScreen, navigateTo]);
 
+  const handleUnlock = useCallback(() => {
+    setIsLocked(false);
+  }, []);
+
+  const handleForgotPin = useCallback(() => {
+    // TODO: Implement forgot PIN flow (e.g., clear data or show recovery options)
+    // For now, just alert the user
+    Alert.alert(
+      'Forgot PIN',
+      'To reset your PIN, you will need to clear all app data. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear Data',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await accountsStorage.remove(STORAGE_KEYS.PIN);
+              await accountsStorage.remove(STORAGE_KEYS.ACCOUNTS);
+              setStoredPin(null);
+              setIsLocked(false);
+              hapticService.trigger('success');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to clear data');
+            }
+          },
+        },
+      ],
+    );
+  }, []);
+
   // Avoid type narrowing by using a helper function
   const getNavIconColor = (screenType: ScreenType) =>
     currentScreen === screenType ? colors.accent : colors.textSecondary;
 
   const getNavIconBg = (screenType: ScreenType) =>
     currentScreen === screenType ? colors.accentLight : 'transparent';
+
+  // Show loading state while checking for PIN
+  if (isLoadingPin) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]} />
+    );
+  }
+
+  // Show PIN lock screen if locked
+  if (isLocked && storedPin) {
+    return <PinLockScreen storedPin={storedPin} onUnlock={handleUnlock} onForgotPin={handleForgotPin} />;
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
