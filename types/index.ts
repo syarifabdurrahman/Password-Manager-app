@@ -135,6 +135,7 @@ export const STORAGE_KEYS = {
   ACCOUNTS: '@mavault_accounts',
   SETTINGS: '@mavault_settings',
   BACKUP: '@mavault_backup',
+  PIN: '@mavault_pin',
 } as const;
 
 // ==================== Constants ====================

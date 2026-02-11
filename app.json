@@ -1,4 +1,11 @@
 {
   "name": "MaVault",
-  "displayName": "MaVault"
+  "displayName": "MaVault",
+  "icon": "./assets/images/Icon 512x512.png",
+  "android": {
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/images/Icon 512x512.png",
+      "backgroundColor": "#6366F1"
+    }
+  }
 }

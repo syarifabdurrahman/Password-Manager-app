@@ -5,7 +5,12 @@
       "Bash(npm run android:*)",
       "Bash(dir:*)",
       "Bash(gradlew.bat:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "Bash(npx react-native assets:*)",
+      "Bash(npx @react-native-community/cli-assets:*)",
+      "Bash(magick:*)",
+      "Bash(powershell -Command \"Add-Type -AssemblyName System.Drawing; $src = [System.Drawing.Image]::FromFile\\(\\(Resolve-Path ''assets/images/Icon 512x512.png''\\)\\); $sizes = @{mdpi=48; hdpi=72; xhdpi=96; xxhdpi=144; xxxhdpi=192}; foreach \\($dpi in $sizes.Keys\\) { $size = $sizes[$dpi]; $dest = New-Object System.Drawing.Bitmap\\($size, $size\\); $graphics = [System.Drawing.Graphics]::FromImage\\($dest\\); $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic; $graphics.DrawImage\\($src, 0, 0, $size, $size\\); $dest.Save\\(\"\"android/app/src/main/res/mipmap-$dpi/ic_launcher.png\"\"\\); $graphics.Dispose\\(\\); $dest.Dispose\\(\\); }; $src.Dispose\\(\\); Write-Host ''Icons generated''\")",
+      "Bash(powershell:*)"
     ]
   }
 }
