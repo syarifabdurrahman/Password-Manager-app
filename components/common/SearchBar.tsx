@@ -37,7 +37,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     Animated.timing(focusAnim, {
       toValue: 1,
       duration: 200,
-      useNativeDriver: false,
     }).start();
   }, [focusAnim]);
 
@@ -46,7 +45,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     Animated.timing(focusAnim, {
       toValue: 0,
       duration: 200,
-      useNativeDriver: false,
     }).start();
   }, [focusAnim]);
 

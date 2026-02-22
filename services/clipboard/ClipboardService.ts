@@ -16,7 +16,7 @@ export class ClipboardService implements IClipboardService {
    */
   async copyToClipboard(text: string): Promise<boolean> {
     try {
-      await Clipboard.setString(text);
+      await Clipboard.setStringAsync(text);
       return true;
     } catch (error) {
       console.error('Error copying to clipboard:', error);
@@ -29,7 +29,7 @@ export class ClipboardService implements IClipboardService {
    */
   async getFromClipboard(): Promise<string> {
     try {
-      return await Clipboard.getString();
+      return await Clipboard.getStringAsync();
     } catch (error) {
       console.error('Error reading from clipboard:', error);
       return '';

@@ -14,7 +14,9 @@
       "Bash(gradlew:*)",
       "Bash(cmd:*)",
       "Bash(\"d:\\\\React Native\\\\Hello World\\\\Password-Manager-app\\\\android\\\\gradlew.bat\" clean)",
-      "Bash(\"./gradlew.bat\":*)"
+      "Bash(\"./gradlew.bat\":*)",
+      "Bash(/home/syarif/\"Projects/P-React Native/Hello World/Password-Manager-app/android\"/gradlew:*)",
+      "Bash(cd:*)"
     ]
   }
 }

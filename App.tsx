@@ -23,7 +23,7 @@ import {
 
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { VaultScreen, GeneratorScreen, SettingsScreen, PinLockScreen } from '@/screens';
-import { hapticService, accountsStorage } from '@/services';
+import { hapticService, accountsStorage, adMobService } from '@/services';
 import { STORAGE_KEYS } from '@/types';
 
 type ScreenType = 'vault' | 'generator' | 'settings';
@@ -35,6 +35,7 @@ function AppContent() {
   const [isLocked, setIsLocked] = useState(true);
   const [storedPin, setStoredPin] = useState<string | null>(null);
   const [isLoadingPin, setIsLoadingPin] = useState(true);
+  const [appOpened, setAppOpened] = useState(false);
 
   // Load PIN setting on mount
   useEffect(() => {
@@ -56,8 +57,31 @@ function AppContent() {
     loadPinSetting();
   }, []);
 
+  // Load interstitial ad on mount and show after app opens
+  useEffect(() => {
+    adMobService.loadInterstitial();
+  }, []);
+
+  // Show ad when app is unlocked (after PIN or immediately if no PIN)
+  useEffect(() => {
+    if (!isLocked && !appOpened) {
+      setAppOpened(true);
+      // Show ad after a short delay
+      setTimeout(() => {
+        adMobService.showInterstitial();
+      }, 500);
+    }
+  }, [isLocked, appOpened]);
+
   const navigateTo = useCallback((screen: ScreenType) => {
     hapticService.trigger('light');
+
+    // Show ad when navigating to settings
+    if (screen === 'settings') {
+      setTimeout(() => {
+        adMobService.showInterstitial();
+      }, 300);
+    }
 
     // Animate navigation
     Animated.timing(navAnim, {

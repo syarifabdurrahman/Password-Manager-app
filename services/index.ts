@@ -8,3 +8,4 @@ export * from './password/PasswordGeneratorService';
 export * from './clipboard/ClipboardService';
 export * from './haptic/HapticService';
 export * from './crypto/CryptoService';
+export * from './admob/AdMobService';

@@ -47,7 +47,6 @@ export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps>
     Animated.timing(progressAnim, {
       toValue: config.percentage,
       duration: 300,
-      useNativeDriver: false,
     }).start();
   }, [config.percentage, progressAnim]);
 

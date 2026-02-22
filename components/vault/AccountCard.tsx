@@ -80,14 +80,12 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   const handlePressIn = () => {
     Animated.spring(scale, {
       toValue: 0.97,
-      useNativeDriver: true,
     }).start();
   };
 
   const handlePressOut = () => {
     Animated.spring(scale, {
       toValue: 1,
-      useNativeDriver: true,
     }).start();
   };
 
@@ -104,6 +102,18 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   };
 
   const displayPassword = showPassword ? account.password : "•".repeat(12);
+
+  // Censor email to show only first character and domain
+  const censorEmail = (email: string) => {
+    const atIndex = email.indexOf("@");
+    if (atIndex <= 1) return email; // If no @ or only 1 char before it, show as is
+    const firstChar = email[0];
+    const domain = email.substring(atIndex);
+    const dots = ".".repeat(Math.min(atIndex - 1, 5)); // Max 5 dots
+    return `${firstChar}${dots}${domain}`;
+  };
+
+  const displayUsername = censorEmail(account.username);
 
   return (
     <AnimatedTouchableOpacity
@@ -134,7 +144,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
                   style={[styles.username, { color: colors.textSecondary }]}
                   numberOfLines={1}
                 >
-                  {account.username}
+                  {displayUsername}
                 </Text>
               </View>
             </View>

@@ -6,6 +6,11 @@
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/Icon 512x512.png",
       "backgroundColor": "#6366F1"
-    }
+    },
+    "googleServicesFile": "./google-services.json"
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-3940256099942544~3347511713",
+    "ios_app_id": "ca-app-pub-3940256099942544~1458002511"
   }
 }

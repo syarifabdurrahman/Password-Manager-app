@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "bash ./scripts/start-metro.sh && react-native run-android --no-packager",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "metro": "konsole -e 'npm start'",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -17,6 +18,7 @@
     "react": "19.1.0",
     "react-native": "0.81.5",
     "react-native-fs": "^2.20.0",
+    "react-native-google-mobile-ads": "^15.8.3",
     "react-native-haptic-feedback": "^2.3.3",
     "react-native-mmkv": "^2.12.2",
     "react-native-safe-area-context": "^5.6.2",

@@ -89,6 +89,15 @@ export interface IHapticService {
 }
 
 /**
+ * AdMob service interface
+ */
+export interface IAdMobService {
+  loadInterstitial(): Promise<void>;
+  showInterstitial(): Promise<boolean>;
+  isInterstitialLoaded(): boolean;
+}
+
+/**
  * Analytics service interface (optional, for future use)
  */
 export interface IAnalyticsService {
